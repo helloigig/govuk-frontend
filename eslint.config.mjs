@@ -2,7 +2,6 @@ import { fileURLToPath } from 'node:url'
 
 import JSConfigs from '@eslint/js'
 import MarkdownPlugin from '@eslint/markdown'
-import TypescriptParser from '@typescript-eslint/parser'
 import { defineConfig, globalIgnores, includeIgnoreFile } from 'eslint/config'
 import prettierConfig from 'eslint-config-prettier'
 import ESX from 'eslint-plugin-es-x'
@@ -56,7 +55,7 @@ export default defineConfig([
     ],
     // Replicate standard's environment set up
     languageOptions: {
-      parser: TypescriptParser,
+      parser: TypescriptEslint.parser,
       parserOptions: {
         ecmaVersion: 'latest',
         projectService: true,
