@@ -86,6 +86,9 @@
   // on the button means that the cursor style
   // be applied on the button itself
   .govuk-file-upload-wrapper--disabled {
+    // Clicks also land on the wrapper instead of the button,
+    // so stop double clicks from selecting the button's text
+    user-select: none;
     cursor: not-allowed;
   }
 
@@ -144,7 +147,7 @@
       background-color: $govuk-secondary-button-colour;
     }
 
-    &:hover {
+    &:not(:disabled):hover {
       border-style: dashed;
       border-color: $drop-zone-hover-border-colour;
 
@@ -157,7 +160,7 @@
       }
     }
 
-    &:active,
+    &:not(:disabled):active,
     &:focus {
       @include base.govuk-focused-form-input;
       border-style: solid;
@@ -193,9 +196,9 @@
       background-color: $empty-status-background-colour;
     }
 
-    &:hover,
+    &:not(:disabled):hover,
     &:focus,
-    &:active {
+    &:not(:disabled):active {
       background-color: $drop-zone-focus-background-colour;
 
       .govuk-file-upload-button__status {

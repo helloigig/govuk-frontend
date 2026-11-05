@@ -551,6 +551,63 @@ describe('/components/file-upload', () => {
         })
       })
 
+      describe('when disabled', () => {
+        const getButtonStyles = () =>
+          page.$eval(buttonSelector, (el) => {
+            const styles = window.getComputedStyle(el)
+
+            return {
+              borderStyle: styles.borderTopStyle,
+              borderColor: styles.borderTopColor,
+              backgroundColor: styles.backgroundColor,
+              outlineStyle: styles.outlineStyle,
+              boxShadow: styles.boxShadow
+            }
+          })
+
+        beforeEach(async () => {
+          await render(page, 'file-upload', examples.enhanced, {
+            beforeInitialisation() {
+              document
+                .querySelector('[type="file"]')
+                .setAttribute('disabled', '')
+            }
+          })
+        })
+
+        it('does not show hover styles when the label is hovered', async () => {
+          const stylesBefore = await getButtonStyles()
+
+          await page.hover('.govuk-label')
+
+          await expect(getButtonStyles()).resolves.toEqual(stylesBefore)
+        })
+
+        it('does not show focus styles when the label is pressed', async () => {
+          const stylesBefore = await getButtonStyles()
+
+          await page.hover('.govuk-label')
+          await page.mouse.down()
+          const stylesWhilePressed = await getButtonStyles()
+          await page.mouse.up()
+
+          expect(stylesWhilePressed).toEqual(stylesBefore)
+        })
+
+        it('does not select text when the drop zone is double clicked', async () => {
+          const $status = await page.$(statusSelector)
+          const { x, y, height } = await $status.boundingBox()
+
+          await page.mouse.click(x + 20, y + height / 2, { clickCount: 2 })
+
+          const selection = await page.evaluate(() =>
+            window.getSelection().toString()
+          )
+
+          expect(selection).toBe('')
+        })
+      })
+
       describe('aria-describedby', () => {
         it('copies the `aria-describedby` attribute from the `<input>` to the `<button>`', async () => {
           await render(
