@@ -573,14 +573,18 @@ describe('/components/file-upload', () => {
                 .setAttribute('disabled', '')
             }
           })
+
+          // Move the mouse away so a previous test can't leave it hovering
+          await page.mouse.move(0, 0)
         })
 
         it('does not show hover styles when the label is hovered', async () => {
           const stylesBefore = await getButtonStyles()
 
           await page.hover('.govuk-label')
+          const stylesWhileHovered = await getButtonStyles()
 
-          await expect(getButtonStyles()).resolves.toEqual(stylesBefore)
+          expect(stylesWhileHovered).toEqual(stylesBefore)
         })
 
         it('does not show focus styles when the label is pressed', async () => {
@@ -596,9 +600,11 @@ describe('/components/file-upload', () => {
 
         it('does not select text when the drop zone is double clicked', async () => {
           const $status = await page.$(statusSelector)
-          const { x, y, height } = await $status.boundingBox()
+          const { x, y, width, height } = await $status.boundingBox()
 
-          await page.mouse.click(x + 20, y + height / 2, { clickCount: 2 })
+          await page.mouse.click(x + width / 2, y + height / 2, {
+            clickCount: 2
+          })
 
           const selection = await page.evaluate(() =>
             window.getSelection().toString()
